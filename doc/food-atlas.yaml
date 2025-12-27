@@ -3,7 +3,13 @@ openapi: 3.0.4
 info:
   title: Food Atlas
   description: An API for geographical info about recipes
-  version: 0.1.0
+  version: 0.2.0
+
+servers:
+  - url: https://food-atlas.cc
+    description: Main (production) server
+  - url: http://localhost:8080
+    description: Local staging server
 
 paths:
   /recipes:
