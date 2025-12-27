@@ -3,25 +3,346 @@ openapi: 3.0.4
 info:
   title: Food Atlas
   description: An API for geographical info about recipes
-  version: 0.1.0
+  version: 0.2.1
+
+servers:
+  - url: https://food-atlas.cc
+    description: Main (production) server
+  - url: http://localhost:8080
+    description: Local staging server
 
 paths:
   /recipes:
     get:
-      summary: Returns a list of recipes.
+      summary: Returns a list of recipes
+      parameters:
+        - in: query
+          name: max_time
+          schema:
+            type: integer
+          description: filter out all recipes taking longer than max_time
+        - in: query
+          name: labels
+          schema:
+            type: array
+            items:
+              type: string
+          description: filter for recipes containing these labels
       responses:
-        "200": # status code
-          description: A JSON array of recipes names
+        "200":
+          description: Returns an array of recipes
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The recipe ID.
-                    name:
-                      type: string
-                      description: The recipe name.
+                  $ref: "#/components/schemas/Recipe"
+    post:
+      summary: Create a new recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/RecipeProperties"
+      responses:
+        "201":
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "409":
+          $ref: "#/components/responses/RecipeExists"
+  /recipes/{id}:
+    get:
+      summary: Get a Recipe
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the recipe to get
+      responses:
+        "200":
+          description: Returns a single recipe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "404":
+          $ref: "#/components/responses/RecipeNotFound"
+    patch:
+      summary: Update a Recipe
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the recipe to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/RecipeProperties"
+      responses:
+        "200":
+          description: Updated recipe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "404":
+          $ref: "#/components/responses/RecipeNotFound"
+        "409":
+          $ref: "#/components/responses/RecipeExists"
+    delete:
+      summary: Delete a recipe
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the recipe to delete
+      responses:
+        "204":
+          description: Recipe deleted
+        "404":
+          $ref: "#/components/responses/RecipeNotFound"
+  /countries:
+    get:
+      summary: Get the list of countries
+      responses:
+        "200":
+          description: Returns an array of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Country"
+    post:
+      summary: Create a new country
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/CountryProperties"
+      responses:
+        "201":
+          description: Country created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "400":
+          description: "Invalid recipes supplied"
+        "409":
+          $ref: "#/components/responses/CountryExists"
+  /countries/{id}:
+    get:
+      summary: Get a Country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to get
+      responses:
+        "200":
+          description: Returns a single country
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+    patch:
+      summary: Update a Country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/CountryProperties"
+      responses:
+        "200":
+          description: Updated country
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "400":
+          description: "Invalid recipes supplied"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+        "409":
+          $ref: "#/components/responses/CountryExists"
+    delete:
+      summary: Delete a country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to delete
+      responses:
+        "204":
+          description: Country deleted
+        "404":
+          $ref: "#/components/responses/CountryNotFound"   
+  /countries/{id}/recipes:
+    get:
+      summary: Get a list of recipes from a country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country
+      responses:
+        "200":
+          description: "Returns an array of recipes"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Recipe"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+    post:
+      summary: Link a list of recipes by id to a country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              example:
+                 - 1
+                 - 3
+      responses:
+        "200":
+          description: "Number of recipes newly linked to country"
+          content:
+            application/json:
+              schema:
+                type: integer
+              example: 2
+        "400":
+          description: "Invalid recipes supplied"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+    delete:
+      summary: Unlink a list of recipes from a country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              example:
+                 - 1
+                 - 3
+      responses:
+        "204":
+          description: "Recipes unlinked from country"
+        "400":
+          description: "Invalid recipes supplied"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+components:
+  responses:
+    RecipeExists:
+      description: Recipe with this name already exists
+    RecipeNotFound:
+      description: Recipe not found
+    CountryExists:
+      description: Country with this name already exists
+    CountryNotFound:
+      description: Country not found
+  common:
+    RecipeProperties:
+      type: object
+      properties:
+        name:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        time:
+          type: integer
+        description:
+          type: string
+      example:
+        name: Carbonara
+        labels:
+          - pasta
+          - pork
+          - savory
+        time: 20
+        description: "Carbonara is a dish from Rome, Italy"
+    CountryProperties:
+      type: object
+      properties:
+        name:
+          type: string
+        recipes:
+          type: array
+          items:
+            type: integer
+      example:
+        name: Italy
+        recipes:
+          - 1
+          - 5
+          - 13
+  schemas:
+    Country:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+          example:
+            id: 1
+        - $ref: "#/components/common/CountryProperties"
+    Recipe:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+          example:
+            id: 1
+        - $ref: "#/components/common/RecipeProperties"
