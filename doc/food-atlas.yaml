@@ -95,6 +95,8 @@ paths:
                 $ref: "#/components/schemas/Recipe"
         "404":
           $ref: "#/components/responses/RecipeNotFound"
+        "409":
+          $ref: "#/components/responses/RecipeExists"
     delete:
       summary: Delete a recipe
       parameters:
