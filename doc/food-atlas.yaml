@@ -23,11 +23,65 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The recipe ID.
-                    name:
-                      type: string
-                      description: The recipe name.
+                  $ref: "#/components/schemas/Recipe"
+    post:
+      summary: Create a new recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/RecipeProperties"
+      responses:
+        "201":
+          description: A JSON of the newly created recipe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "409":
+          $ref: "#/components/responses/RecipeExists"
+
+components:
+  responses:
+    RecipeExists:
+      description: Recipe with this name already Exists
+  common:
+    RecipeProperties: # Object definition
+      type: object
+      required:
+        - name
+        - labels
+        - time
+        - description
+      properties:
+        name:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        time:
+          type: integer
+        description:
+          type: string
+      example:
+        name: Carbonara
+        labels:
+          - pasta
+          - pork
+          - savory
+        time: 20
+        description: "Carbonara is a dish from Rome, Italy"
+  schemas:
+    Recipe:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+          example:
+            id: 1
+        - $ref: "#/components/common/RecipeProperties"
