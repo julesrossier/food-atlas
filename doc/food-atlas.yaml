@@ -254,9 +254,10 @@ paths:
       responses:
         "204":
           description: "Recipes unlinked from country"
+        "400":
+          description: "Invalid recipes supplied"
         "404":
-          description: Country not found or recipe in list not found in country
-
+          $ref: "#/components/responses/CountryNotFound"
 components:
   responses:
     RecipeExists:
