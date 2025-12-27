@@ -56,7 +56,7 @@ paths:
           $ref: "#/components/responses/RecipeExists"
   /recipes/{id}:
     get:
-      summary: get a Recipe
+      summary: Get a Recipe
       parameters:
         - in: path
           name: id
@@ -139,7 +139,62 @@ paths:
                 $ref: "#/components/schemas/Country"
         "409":
           $ref: "#/components/responses/CountryExists"
-    
+  /countries/{id}:
+    get:
+      summary: Get a Country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to get
+      responses:
+        "200":
+          description: Returns a single country
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+    patch:
+      summary: Update a Country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/common/CountryProperties"
+      responses:
+        "200":
+          description: Updated country
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "404":
+          $ref: "#/components/responses/CountryNotFound"
+        "409":
+          $ref: "#/components/responses/CountryExists"
+    delete:
+      summary: Delete a country
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the country to delete
+      responses:
+        "204":
+          description: Country deleted
+        "404":
+          $ref: "#/components/responses/CountryNotFound"   
 
 components:
   responses:
@@ -149,6 +204,8 @@ components:
       description: Recipe not found
     CountryExists:
       description: Country with this name already exists
+    CountryNotFound:
+      description: Country not found
   common:
     RecipeProperties:
       type: object
