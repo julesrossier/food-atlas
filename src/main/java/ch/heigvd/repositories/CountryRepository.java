@@ -3,6 +3,7 @@ package ch.heigvd.repositories;
 import ch.heigvd.entities.Country;
 import ch.heigvd.entities.Recipe;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.ConflictResponse;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.NotModifiedResponse;
 
@@ -21,6 +22,11 @@ public class CountryRepository {
     }
 
     public Country newCountry(Country country) {
+        for(Country c : countries){
+            if(c.getCode().equals(country.getCode()) || c.getName().equals(country.getName())){
+                throw new ConflictResponse();
+            }
+        }
         countries.add(country);
         return country;
     }
@@ -38,6 +44,11 @@ public class CountryRepository {
 
     public void updateCountry(String countryCode, Country newValues) {
         Country country = getCountryByCode(countryCode);
+        for(Country c : countries){
+            if(!c.equals(country) && (c.getCode().equals(country.getCode()) || c.getName().equals(country.getName()))){
+                throw new ConflictResponse();
+            }
+        }
         if(country.getName() != null && !country.getName().isEmpty()) {
             country.setName(newValues.getName());
         }
@@ -83,5 +94,14 @@ public class CountryRepository {
         Country country = getCountryByCode(countryCode);
 
         country.setRecipes(new HashSet<>());
+    }
+
+    public boolean isRecipeLinkedToCountry(Integer recipeId) {
+        for(Country country : countries) {
+            for(Integer storedId : country.getRecipes()) {
+                if(storedId.equals(recipeId)) return true;
+            }
+        }
+        return false;
     }
 }

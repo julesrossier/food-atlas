@@ -1,19 +1,21 @@
 package ch.heigvd.controllers;
 
 import ch.heigvd.entities.Recipe;
+import ch.heigvd.repositories.CountryRepository;
 import ch.heigvd.repositories.RecipeRepository;
-import io.javalin.http.Context;
-import io.javalin.http.NotFoundResponse;
+import io.javalin.http.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class RecipeController {
-    private RecipeRepository recipeRepository;
+    private final RecipeRepository recipeRepository;
+    private final CountryRepository countryRepository;
 
-    public RecipeController(RecipeRepository  recipeRepository) {
+    public RecipeController(RecipeRepository  recipeRepository, CountryRepository countryRepository) {
         this.recipeRepository = recipeRepository;
+        this.countryRepository = countryRepository;
     }
 
     public void getRecipes(Context ctx){
@@ -29,6 +31,7 @@ public class RecipeController {
     public void addRecipe(Context ctx){
         Recipe recipe = ctx.bodyAsClass(Recipe.class);
         recipeRepository.newRecipe(recipe);
+        throw new CreatedResponse();
     }
 
     public void getById(Context ctx){
@@ -41,10 +44,15 @@ public class RecipeController {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
         Recipe newRecipe = ctx.bodyAsClass(Recipe.class);
         recipeRepository.modifyRecipe(id, newRecipe);
+        throw new NoContentResponse();
     }
 
     public void deleteRecipe(Context ctx){
         int id = ctx.pathParamAsClass("id", Integer.class).get();
+        if(countryRepository.isRecipeLinkedToCountry(id)) {
+            throw new NotModifiedResponse("Recipe is linked to at least one country");
+        }
         if(!recipeRepository.deleteById(id)) throw new NotFoundResponse();
+        throw new NoContentResponse();
     }
 }

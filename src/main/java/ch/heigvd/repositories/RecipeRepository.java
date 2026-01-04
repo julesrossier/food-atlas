@@ -1,6 +1,7 @@
 package ch.heigvd.repositories;
 
 import ch.heigvd.entities.Recipe;
+import io.javalin.http.ConflictResponse;
 import io.javalin.http.NotFoundResponse;
 import lombok.Locked;
 
@@ -45,31 +46,31 @@ public class RecipeRepository {
         throw new NotFoundResponse("Recipe with id " + recipeId + " not found");
     }
 
-    public List<Recipe> getManyById(int[] recipeIds) {
-        List<Recipe> recipes = new ArrayList<>();
-        for(int recipeId: recipeIds) {
-            recipes.add(getOneById(recipeId));
-        }
-        return recipes;
-    }
-
      public void newRecipe(Recipe recipe) {
+        for(Recipe r : recipes) {
+            if(recipe.getName().equals(r.getName())) {
+                throw new ConflictResponse();
+            }
+        }
+
         recipe.setId(++counter);
-        System.out.println(recipe);
         recipes.add(recipe);
     }
 
     @Locked
-    public boolean modifyRecipe(int recipeId, Recipe newRecipe) {
-        Recipe oldRecipe = getOneById(recipeId);
+    public void modifyRecipe(int recipeId, Recipe newRecipe) {
+        for(Recipe r : recipes) {
+            if(newRecipe.getName().equals(r.getName())) {
+                throw new ConflictResponse();
+            }
+        }
 
+        Recipe oldRecipe = getOneById(recipeId);
         if(newRecipe.getName() != null) oldRecipe.setName(newRecipe.getName());
         if(newRecipe.getTime() != null) oldRecipe.setTime(newRecipe.getTime());
         if(newRecipe.getDescription() != null) oldRecipe.setDescription(newRecipe.getDescription());
         if(newRecipe.getLabels() != null && !newRecipe.getLabels().isEmpty())
             oldRecipe.setLabels(new ArrayList<>(newRecipe.getLabels()));
-
-        return true;
     }
 
     @Locked

@@ -7,16 +7,8 @@ import ch.heigvd.entities.Recipe;
 import ch.heigvd.repositories.CountryRepository;
 import ch.heigvd.repositories.RecipeRepository;
 import io.javalin.Javalin;
-import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.http.NotFoundResponse;
-import io.javalin.validation.Validator;
-import org.eclipse.jetty.server.Authentication;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
   public static final int PORT = 8080;
@@ -26,7 +18,7 @@ public class Main {
 
     RecipeRepository recipeRepository = new RecipeRepository();
     CountryRepository countryRepository = new CountryRepository(recipeRepository);
-    RecipeController recipeController = new RecipeController(recipeRepository);
+    RecipeController recipeController = new RecipeController(recipeRepository, countryRepository);
     CountryController countryController = new CountryController(countryRepository);
 
       recipeRepository.newRecipe(new Recipe("Test", 30, "AAAAAAAAAAAAAA", List.of("a", "b", "c")));
@@ -35,10 +27,7 @@ public class Main {
 
       countryRepository.newCountry(new Country("CHE", "Switzerland", List.of(1)));
 
-    app.get("/test", ctx -> {ctx.result("Test");});
-
     app.get("/recipes", recipeController::getRecipes);
-    // TODO : verify if recipe is linked to a country before deleting
     app.post("/recipes", recipeController::addRecipe);
     app.get("/recipes/{id}", recipeController::getById);
     app.patch("/recipes/{id}", recipeController::patchRecipe);
@@ -47,7 +36,7 @@ public class Main {
     app.post("/countries", countryController::newCountry);
     app.get("/countries", countryController::getAllCountries);
     app.get("/countries/{code}", countryController::getOneCountry);
-    app.patch("/countries/{code}", countryController::updateCountry);
+    app.patch("/countries/{code}", countryController::patchCountry);
     app.delete("/countries/{code}", countryController::deleteCountry);
 
     app.get("/countries/{code}/recipes", countryController::getRecipesFromCountry);
