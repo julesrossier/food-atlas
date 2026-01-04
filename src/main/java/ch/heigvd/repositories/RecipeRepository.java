@@ -1,6 +1,7 @@
 package ch.heigvd.repositories;
 
 import ch.heigvd.entities.Recipe;
+import io.javalin.http.NotFoundResponse;
 import lombok.Locked;
 
 import java.util.ArrayList;
@@ -35,13 +36,21 @@ public class RecipeRepository {
         return recipes.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public Optional<Recipe> getById(Integer recipeId) {
+    public Recipe getOneById(int recipeId) {
         for(Recipe recipe: recipes) {
             if(recipe.getId() == recipeId) {
-                return Optional.of(recipe);
+                return recipe;
             }
         }
-        return Optional.empty();
+        throw new NotFoundResponse("Recipe with id " + recipeId + " not found");
+    }
+
+    public List<Recipe> getManyById(int[] recipeIds) {
+        List<Recipe> recipes = new ArrayList<>();
+        for(int recipeId: recipeIds) {
+            recipes.add(getOneById(recipeId));
+        }
+        return recipes;
     }
 
      public void newRecipe(Recipe recipe) {
@@ -51,12 +60,8 @@ public class RecipeRepository {
     }
 
     @Locked
-    public boolean modifyRecipe(Integer recipeId, Recipe newRecipe) {
-        Optional<Recipe> recipeOptional = getById(recipeId);
-
-        if(recipeOptional.isEmpty()) return false;
-
-        Recipe oldRecipe = recipeOptional.get();
+    public boolean modifyRecipe(int recipeId, Recipe newRecipe) {
+        Recipe oldRecipe = getOneById(recipeId);
 
         if(newRecipe.getName() != null) oldRecipe.setName(newRecipe.getName());
         if(newRecipe.getTime() != null) oldRecipe.setTime(newRecipe.getTime());
@@ -68,12 +73,19 @@ public class RecipeRepository {
     }
 
     @Locked
-    public boolean deleteById(Integer recipeId) {
+    public boolean deleteById(int recipeId) {
         for(Recipe recipe: recipes) {
             if(recipe.getId() == recipeId) {
                 recipes.remove(recipe);
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean existsById(int recipeId) {
+        for(Recipe recipe: recipes) {
+            if(recipe.getId() == recipeId) return true;
         }
         return false;
     }

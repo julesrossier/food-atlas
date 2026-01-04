@@ -33,8 +33,7 @@ public class RecipeController {
 
     public void getById(Context ctx){
         int id = ctx.pathParamAsClass("id", Integer.class).get();
-        Recipe recipe = recipeRepository.getById(id)
-                .orElseThrow(NotFoundResponse::new);
+        Recipe recipe = recipeRepository.getOneById(id);
         ctx.json(recipe);
     }
 

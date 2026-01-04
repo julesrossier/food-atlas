@@ -1,0 +1,75 @@
+package ch.heigvd.controllers;
+
+import ch.heigvd.entities.Country;
+import ch.heigvd.repositories.CountryRepository;
+import io.javalin.http.BadRequestResponse;
+import io.javalin.http.Context;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class CountryController {
+    private final CountryRepository countryRepository;
+
+    public CountryController(CountryRepository countryRepository) {
+        this.countryRepository = countryRepository;
+    }
+
+    public void newCountry(Context ctx) {
+        // TODO : check if the predicate "is not null" is enough
+        Country entry = ctx.bodyValidator(Country.class)
+                .check(country -> country.getCode() != null, "No country code given")
+                .check(country -> country.getName() != null, "No country name given")
+                .get();
+        ctx.json(countryRepository.newCountry(entry));
+    }
+
+    public void getAllCountries(Context ctx) {
+        ctx.json(countryRepository.getAllCountries());
+    }
+
+    public void getOneCountry(Context ctx) {
+        String countryCode = ctx.pathParam("code");
+        ctx.json(countryRepository.getCountryByCode(countryCode));
+    }
+
+    public void updateCountry(Context ctx) {
+        String countryCode = ctx.pathParam("code");
+        Country newEntry = ctx.bodyAsClass(Country.class);
+        countryRepository.updateCountry(countryCode, newEntry);
+    }
+
+    public void deleteCountry(Context ctx) {
+        String countryCode = ctx.pathParam("code");
+        countryRepository.deleteCountry(countryCode);
+    }
+
+    public void getRecipesFromCountry(Context ctx) {
+        ctx.json(countryRepository.getRecipesFromCountry(ctx.pathParam("code")));
+    }
+
+    public void linkRecipesToCountry(Context ctx) {
+        String countryCode = ctx.pathParam("code");
+
+        List<Integer> recipesIds = new ArrayList<>();
+        String recipesIdsEntry = ctx.pathParam("recipesIds");
+        if(!recipesIdsEntry.isEmpty()) {
+            try {
+                recipesIds = Arrays.stream(recipesIdsEntry.split(","))
+                        .toList().stream()
+                        .map(Integer::parseInt)
+                        .toList();
+            }
+            catch(NumberFormatException e) {
+                throw new BadRequestResponse("Invalid request path parameter");
+            }
+        }
+
+        countryRepository.linkRecipesToCountry(countryCode, recipesIds);
+    }
+
+    public void dissociateRecipesFromCountry(Context ctx) {
+        countryRepository.dissociateRecipesFromCountry(ctx.pathParam("code"));
+    }
+}
