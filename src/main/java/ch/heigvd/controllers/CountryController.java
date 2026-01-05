@@ -19,7 +19,6 @@ public class CountryController {
     }
 
     public void newCountry(Context ctx) {
-        // TODO : check if the predicate "is not null" is enough
         Country entry = ctx.bodyValidator(Country.class)
                 .check(country -> country.getCode() != null, "No country code given")
                 .check(country -> country.getName() != null, "No country name given")
@@ -58,7 +57,7 @@ public class CountryController {
         String countryCode = ctx.pathParam("code");
 
         List<Integer> recipesIds = new ArrayList<>();
-        String recipesIdsEntry = ctx.pathParam("recipesIds");
+        String recipesIdsEntry = ctx.queryParam("recipesIds");
         if(!recipesIdsEntry.isEmpty()) {
             try {
                 recipesIds = Arrays.stream(recipesIdsEntry.split(","))
