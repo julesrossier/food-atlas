@@ -13,18 +13,18 @@
   </properties>
 
   <dependencies>
-        <!-- https://mvnrepository.com/artifact/io.javalin/javalin-bundle -->
-        <dependency>
-          <groupId>io.javalin</groupId>
-          <artifactId>javalin-bundle</artifactId>
-          <version>6.7.0</version>
-        </dependency>
-      <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-      <dependency>
-          <groupId>org.projectlombok</groupId>
-          <artifactId>lombok</artifactId>
-          <version>1.18.42</version>
-      </dependency>
+    <!-- https://mvnrepository.com/artifact/io.javalin/javalin-bundle -->
+    <dependency>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin-bundle</artifactId>
+      <version>6.7.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.42</version>
+    </dependency>
   </dependencies>
 
   <build>
