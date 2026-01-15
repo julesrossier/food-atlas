@@ -96,7 +96,7 @@ services:
       traefik.http.services.swagger.loadbalancer.server.port: "8080"
 
   api:
-    image: traefik/whoami
+    image: ghcr.io/yanniskawronski/food-atlas:latest
     working_dir: /app
     labels:
       traefik.enable: "true"
@@ -107,7 +107,7 @@ services:
       traefik.http.middlewares.redirect-api.redirectregex.regex: "^https:\\/\\/([^\\/]+)\\/?$$"
       traefik.http.middlewares.redirect-api.redirectregex.replacement: "https://$$1/api/"
       traefik.http.routers.api.middlewares: redirect-api
-      #traefik.http.routers.api.middlewares: redirectRegex
+#      traefik.http.routers.api.middlewares: redirectRegex
     networks:
       - traefik_network
     expose:
