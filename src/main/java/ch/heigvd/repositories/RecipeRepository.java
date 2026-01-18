@@ -39,7 +39,7 @@ public class RecipeRepository {
         return recipes.get(id);
       }
     }
-    throw new NotFoundResponse("Recipe with id " + recipeId + " not found");
+    throw new NotFoundResponse();
   }
 
   public void newRecipe(Recipe entry) {
@@ -52,28 +52,29 @@ public class RecipeRepository {
     Integer id = idCounter.incrementAndGet();
     Recipe recipeToAdd =
         new Recipe(id, entry.name(), entry.time(), entry.description(), Set.copyOf(entry.labels()));
-    recipes.put(id, recipeToAdd);
+    recipes.putIfAbsent(id, recipeToAdd);
   }
 
   public void modifyRecipe(int recipeId, Recipe entry) {
-    for (Integer id : recipes.keySet()) {
-      if (entry.name().equals(recipes.get(id).name())) {
-        throw new ConflictResponse();
-      }
-    }
 
-    Recipe oldRecipe = getOneById(recipeId);
+    if(!recipes.containsKey(recipeId)) throw new NotFoundResponse();
 
-    Recipe newRecipe =
-        new Recipe(
-            oldRecipe.id(),
-            entry.name() != null ? entry.name() : oldRecipe.name(),
-            entry.time() != null ? entry.time() : oldRecipe.time(),
-            entry.description() != null ? entry.description() : oldRecipe.description(),
-            (entry.labels() != null && !entry.labels().isEmpty())
-                ? new HashSet<>(entry.labels())
-                : oldRecipe.labels());
-    recipes.put(recipeId, newRecipe);
+    recipes.computeIfPresent(recipeId, (i, oldRecipe) -> {
+        for (Integer id : recipes.keySet()) {
+            if (entry.name() != null && entry.name().equals(recipes.get(id).name())) {
+                throw new ConflictResponse();
+            }
+        }
+
+        return new Recipe(
+                oldRecipe.id(),
+                entry.name() != null ? entry.name() : oldRecipe.name(),
+                entry.time() != null ? entry.time() : oldRecipe.time(),
+                entry.description() != null ? entry.description() : oldRecipe.description(),
+                (entry.labels() != null && !entry.labels().isEmpty())
+                        ? new HashSet<>(entry.labels())
+                        : oldRecipe.labels());
+    });
   }
 
   public boolean deleteById(int recipeId) {

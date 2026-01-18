@@ -108,8 +108,6 @@ paths:
       responses:
         "204":
           description: Recipe deleted
-        "304":
-          description: Recipe is linked to a country
         "404":
           $ref: "#/components/responses/RecipeNotFound"
   /countries:

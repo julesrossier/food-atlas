@@ -26,7 +26,11 @@ public class RecipeController {
   }
 
   public void addRecipe(Context ctx) {
-    Recipe recipe = ctx.bodyAsClass(Recipe.class);
+    Recipe recipe = ctx.bodyValidator(Recipe.class)
+            .check(r -> r.name() != null, "Recipe name is not set")
+            .check(r -> r.time() != null, "Recipe time is not set")
+            .check(r -> r.description() != null, "Recipe description is not set")
+            .get();
     recipeRepository.newRecipe(recipe);
     ctx.status(201);
   }
@@ -44,10 +48,8 @@ public class RecipeController {
   }
 
   public void deleteRecipe(Context ctx) {
-    int id = ctx.pathParamAsClass("id", Integer.class).get();
-    if (countryRepository.isRecipeLinkedToCountry(id)) {
-      throw new NotModifiedResponse("Recipe is linked to at least one country");
-    }
+    Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+    countryRepository.dissociateRecipeFromCountries(id);
     if (!recipeRepository.deleteById(id)) throw new NotFoundResponse();
     ctx.status(204);
   }
