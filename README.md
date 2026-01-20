@@ -1,9 +1,13 @@
 to launch locally
 
-create `.env` from example
+create `.env` with
 
-mandotory to at least set the variables:
+```
+FQDN=
+```
+and `traefik/.env`
 
+mandatory to at least set the variables:
 ```
 FQDN=
 TRAEFIK_DASHBOARD_PASSWD=
@@ -12,5 +16,8 @@ TRAEFIK_DASHBOARD_PASSWD=
 then
 
 ```
-docker compose up
+# launch traefik
+docker compose -f traefik/compose.yaml up -d
+# launch api
+docker compose up -d
 ```
