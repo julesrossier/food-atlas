@@ -169,6 +169,7 @@ Create a new country.
 
 The request body must contain a JSON with the following fields :
 
+- `code` : the [ISO 3166-1 alpha-3 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) of the country
 - `name` : the name of the country
 - `recipes_ids` (optional) : a JSON array containing the ids of the recipes we want to associate to the country
 
@@ -176,7 +177,7 @@ The request body must contain a JSON with the following fields :
 
 The response contains a JSON with the following fields :
 
-- `id` : the identifier of the new country
+- `code` : the identifier of the new country
 - `name` : the name of the new country
 - `recipes_ids` : the ids of the recipes associated to the new country
 
@@ -197,7 +198,7 @@ Get a list of countries.
 
 The response contains a JSON array with the following fields :
 
-- `id` : the identifier of the country
+- `code` : the identifier of the country
 - `name` : the name of the country
 
 #### Status codes
@@ -207,7 +208,7 @@ The response contains a JSON array with the following fields :
 ### Get one country by its ID
 
 ```
-GET /countries/{id}
+GET /countries/{code}
 ```
 
 Get detailed informations about the country queried.
@@ -220,7 +221,7 @@ The request path must contain the id of the country queried.
 
 The response is a JSON containing the following fields :
 
-- `id` : the identifier of the country
+- `code` : the identifier of the country
 - `name` : the name of the country
 - `recipes_ids` : the ids of the recipes linked to the country
 
@@ -232,7 +233,7 @@ The response is a JSON containing the following fields :
 ### Update a country
 
 ```
-PATCH /countries/{id}
+PATCH /countries/{code}
 ```
 
 #### Request
@@ -253,7 +254,7 @@ No response body.
 ### Delete a country
 
 ```
-DELETE /countries/{id}
+DELETE /countries/{code}
 ```
 
 The country can be deleted only if it does not have any recipe linked.
@@ -275,7 +276,7 @@ No response body
 ### Get all the recipes from a country
 
 ```
-GET /countries/{countryId}/recipes
+GET /countries/{code}/recipes
 ```
 
 #### Request
@@ -299,7 +300,7 @@ The response body contains a JSON array with the following fields :
 ### Link a recipe to a country
 
 ```
-POST /countries/{countryId}/recipes
+POST /countries/{code}/recipes
 ```
 
 Link some recipes to a country.
@@ -324,14 +325,12 @@ None.
 ### Delete the link between a recipe and a country
 
 ```
-DELETE /countries/{id}/recipes
+DELETE /countries/{code}/recipes
 ```
 
 #### Request
 
-The request path must contain the id of the country we want to delete recipes. The path parameter must contain the following field :
-
-- `recipesIds` : The list of ids associated to the recipe we want to link to the country.
+The request path must contain the id of the country we want to delete recipes.
 
 #### Response
 

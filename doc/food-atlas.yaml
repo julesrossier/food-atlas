@@ -8,7 +8,7 @@ info:
 servers:
   - url: https://food-atlas.cc
     description: Main (production) server
-  - url: http://localhost:8080
+  - url: http://localhost
     description: Local staging server
 
 paths:
@@ -141,15 +141,15 @@ paths:
           description: "Invalid recipes supplied"
         "409":
           $ref: "#/components/responses/CountryExists"
-  /countries/{id}:
+  /countries/{code}:
     get:
-      summary: Get a Country
+      summary: Get a Country by its ISO 3166-1 alpha-3 code
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
-            type: integer
-          description: id of the country to get
+            type: string
+          description: ISO code of the country
       responses:
         "200":
           description: Returns a single country
@@ -163,10 +163,10 @@ paths:
       summary: Update a Country
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
-            type: integer
-          description: id of the country to update
+            type: string
+          description: ISO code of the country to update
       requestBody:
         required: true
         content:
@@ -190,10 +190,10 @@ paths:
       summary: Delete a country
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
-            type: integer
-          description: id of the country to delete
+            type: string
+          description: ISO code of the country to delete
       responses:
         "204":
           description: Country deleted
@@ -204,10 +204,10 @@ paths:
       summary: Get a list of recipes from a country
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
-            type: integer
-          description: id of the country
+            type: string
+          description: ISO code of the country
       responses:
         "200":
           description: "Returns an array of recipes"
@@ -223,10 +223,10 @@ paths:
       summary: Link a list of recipes by id to a country
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
-            type: integer
-          description: id of the country
+            type: string
+          description: ISO code of the country
       requestBody:
         required: true
         content:
@@ -239,13 +239,8 @@ paths:
                  - 1
                  - 3
       responses:
-        "200":
-          description: "Number of recipes newly linked to country"
-          content:
-            application/json:
-              schema:
-                type: integer
-              example: 2
+        "204":
+          description: "Recipes successfully linked"
         "400":
           description: "Invalid recipes supplied"
         "404":
@@ -254,10 +249,10 @@ paths:
       summary: Unlink a list of recipes from a country
       parameters:
         - in: path
-          name: id
+          name: code
           schema:
             type: integer
-          description: id of the country
+          description: ISO code of the country
       requestBody:
         required: true
         content:
@@ -283,7 +278,7 @@ components:
     RecipeNotFound:
       description: Recipe not found
     CountryExists:
-      description: Country with this name already exists
+      description: There is already a country with given name or given code
     CountryNotFound:
       description: Country not found
   common:

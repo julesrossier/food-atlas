@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.heigvd</groupId>
-  <artifactId>http-and-curl</artifactId>
+  <artifactId>food-atlas</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
@@ -36,7 +36,9 @@
             </sortPom>
           </pom>
           <java>
-            <googleJavaFormat/>
+            <googleJavaFormat>
+              <version>1.28.0</version>
+            </googleJavaFormat>
             <importOrder/>
             <removeUnusedImports/>
             <formatAnnotations/>
