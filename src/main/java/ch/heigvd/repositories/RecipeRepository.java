@@ -95,4 +95,8 @@ public class RecipeRepository {
     }
     return false;
   }
+
+  public String getCache(int i) {
+    return Integer.toHexString(recipes.get(i).hashCode());
+  }
 }

@@ -118,4 +118,8 @@ public class CountryRepository {
           countries.put(countryCode, new Country(countryCode, oldCountry.name(), newRecipesSet));
         });
   }
+
+    public String getCache(String id) {
+        return Integer.toHexString(countries.get(id).hashCode());
+    }
 }

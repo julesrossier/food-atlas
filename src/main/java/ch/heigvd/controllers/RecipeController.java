@@ -38,14 +38,25 @@ public class RecipeController {
 
   public void getById(Context ctx) {
     int id = ctx.pathParamAsClass("id", Integer.class).get();
+    String serverEtag = recipeRepository.getCache(id);
+    String clientEtag = ctx.header("If-None-Match");
+    if(Objects.equals(serverEtag, clientEtag))
+      throw new NotModifiedResponse();
     Recipe recipe = recipeRepository.getOneById(id);
+    ctx.header("ETag", serverEtag);
     ctx.json(recipe);
   }
 
   public void patchRecipe(Context ctx) {
     int id = ctx.pathParamAsClass("id", Integer.class).get();
+    String serverEtag = recipeRepository.getCache(id);
+    String clientEtag = ctx.header("If-Match");
+    if(!Objects.equals(serverEtag, clientEtag))
+      throw new PreconditionFailedResponse();
     Recipe newRecipe = ctx.bodyAsClass(Recipe.class);
     recipeRepository.modifyRecipe(id, newRecipe);
+    ctx.header("ETag", recipeRepository.getCache(id));
+    ctx.status(204);
   }
 
   public void deleteRecipe(Context ctx) {
