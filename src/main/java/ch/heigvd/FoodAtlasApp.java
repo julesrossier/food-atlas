@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-public class Main implements Callable<Integer> {
+public class FoodAtlasApp implements Callable<Integer> {
   private final RecipeRepository recipeRepository = new RecipeRepository();
   private final CountryRepository countryRepository = new CountryRepository(recipeRepository);
   private final RecipeController recipeController =
@@ -101,7 +101,7 @@ public class Main implements Callable<Integer> {
   }
 
   public static void main(String[] args) {
-    Main main = new Main();
-    new CommandLine(main).execute(args);
+    FoodAtlasApp foodAtlasApp = new FoodAtlasApp();
+    new CommandLine(foodAtlasApp).execute(args);
   }
 }

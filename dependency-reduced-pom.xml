@@ -47,7 +47,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>ch.heigvd.Main</mainClass>
+                  <mainClass>ch.heigvd.FoodAtlasApp</mainClass>
                 </transformer>
                 <transformer>
                   <resource>MANIFEST.MF</resource>
