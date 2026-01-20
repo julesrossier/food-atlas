@@ -8,18 +8,30 @@ import ch.heigvd.repositories.CountryRepository;
 import ch.heigvd.repositories.RecipeRepository;
 import io.javalin.Javalin;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
-public class Main {
-  public static final int PORT = 80;
+public class FoodAtlasApp implements Callable<Integer> {
+  private final RecipeRepository recipeRepository = new RecipeRepository();
+  private final CountryRepository countryRepository = new CountryRepository(recipeRepository);
+  private final RecipeController recipeController =
+      new RecipeController(recipeRepository, countryRepository);
+  private final CountryController countryController = new CountryController(countryRepository);
+  private final Javalin app = Javalin.create();
 
-  public static void main(String[] args) {
-    Javalin app = Javalin.create();
+  @Option(
+      names = {"-p", "--port"},
+      defaultValue = "8080",
+      description = "The port used by the Food Atlas application.")
+  private int port;
 
-    RecipeRepository recipeRepository = new RecipeRepository();
-    CountryRepository countryRepository = new CountryRepository(recipeRepository);
-    RecipeController recipeController = new RecipeController(recipeRepository, countryRepository);
-    CountryController countryController = new CountryController(countryRepository);
+  @Option(
+      names = "--populate-with-data",
+      description = "If this flag is inserted, application will be populated with some datas.")
+  private boolean populateWithData;
 
+  private void dataPopulation() {
     recipeRepository.newRecipe(
         new Recipe(
             null,
@@ -62,6 +74,12 @@ public class Main {
     countryRepository.newCountry(new Country("ITA", "Italy", Set.of(1)));
     countryRepository.newCountry(new Country("LBN", "Lebanon", Set.of(3)));
     countryRepository.newCountry(new Country("FRA", "France", Set.of()));
+  }
+
+  public Integer call() throws Exception {
+    if (populateWithData) {
+      dataPopulation();
+    }
 
     app.get("/recipes", recipeController::getRecipes);
     app.post("/recipes", recipeController::addRecipe);
@@ -78,7 +96,12 @@ public class Main {
     app.get("/countries/{code}/recipes", countryController::getRecipesFromCountry);
     app.post("/countries/{code}/recipes", countryController::linkRecipesToCountry);
     app.delete("/countries/{code}/recipes", countryController::dissociateRecipesFromCountry);
+    app.start(port);
+    return 0;
+  }
 
-    app.start(PORT);
+  public static void main(String[] args) {
+    FoodAtlasApp foodAtlasApp = new FoodAtlasApp();
+    new CommandLine(foodAtlasApp).execute(args);
   }
 }
