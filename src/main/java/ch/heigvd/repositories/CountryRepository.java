@@ -5,7 +5,6 @@ import ch.heigvd.entities.Recipe;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ConflictResponse;
 import io.javalin.http.NotFoundResponse;
-import io.javalin.http.NotModifiedResponse;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,10 +65,7 @@ public class CountryRepository {
   }
 
   public void deleteCountry(String countryCode) {
-    Country country = getCountryByCode(countryCode);
-    if (country.recipes() != null && !country.recipes().isEmpty()) {
-      throw new NotModifiedResponse("The country queried is linked to at least one recipe");
-    }
+    if (!countries.containsKey(countryCode)) throw new NotFoundResponse();
     countries.remove(countryCode);
   }
 
