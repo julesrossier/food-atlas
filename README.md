@@ -2,7 +2,7 @@
 
 Food Atlas is a HTTP API that is intended to list various recipes around the world.
 
-It is based on the protocol defined in [this document](doc/api-specs.md).
+The API definition can be found in [this document](doc/api-specs.md). Also, a Swagger UI is displayed as a welcome page when the application is deployed and linked to Traefik.
 
 
 ## Installing and launching the application
@@ -54,6 +54,130 @@ Then :
 docker compose -f traefik/compose.yaml up -d
 # launch api
 docker compose up -d
+```
+
+### Deployment
+
+See [the SETUP document](doc/SETUP.md)
+
+## Usage examples of API
+
+### Create a new recipe
+
+```sh
+curl -X POST -d '{"name": "Escargots au beurre persillé", "labels": ["bourgogne"], "time": 30, "description": "Very atypical, but very delicious !"}' https://food-atlas.cc/recipes
+```
+
+Output (in the implementation, forgot to actually return something):
+```
+{
+    "id": 7,
+    "name": "Escargots au beurre persillé",
+    "labels": ["bourgogne"],
+    "time": 30,
+    "description": "Very atypical, but very delicious !"
+}
+```
+
+### Get all the recipes
+
+```shell
+curl https://food-atlas.cc/recipes
+```
+
+Output:
+
+```
+[
+    {"id":1,"name":"Spaghetti carbonara","time":30,"description":"Sauce is composed with eggs, pancetta and parmesan cheese","labels":["maindish"]},
+    {"id":2,"name":"Fondue moitié-moitié","time":25,"description":"Composed of Vacherin Fribourgeois and Gruyère AOP","labels":["vegetarian","alcohol"]},
+    {"id":3,"name":"Taboulé","time":25,"description":"The traditional delicious recipe","labels":["vegan","vegetarian","salad"]},
+    {"id":4,"name":"Rösti","time":50,"description":"Can be served with fried egg on top","labels":["vegetarian","glutenfree"]},
+    {"id":5,"name":"Ratatouille","time":80,"description":"Mix of delicious vegetables","labels":["vegan","vegetarian","glutenfree"]},
+    {"id":6,"name":"Omelette","time":10,"description":"Beaten eggs cooked in a pan","labels":["vegetarian"]},
+    {"id":7,"name":"Escargots au beurre persillé","time":30,"description":"Very atypical, but very delicious !","labels":["bourgogne"]}
+]
+```
+
+### Get recipes filtered by time
+
+```sh
+curl https://food-atlas.cc/recipes?max_time=30
+```
+
+Output:
+
+```
+[
+    {"id":1,"name":"Spaghetti carbonara","time":30,"description":"Sauce is composed with eggs, pancetta and parmesan cheese","labels":["maindish"]},
+    {"id":2,"name":"Fondue moitié-moitié","time":25,"description":"Composed of Vacherin Fribourgeois and Gruyère AOP","labels":["vegetarian","alcohol"]},
+    {"id":3,"name":"Taboulé","time":25,"description":"The traditional delicious recipe","labels":["vegan","vegetarian","salad"]},
+    {"id":6,"name":"Omelette","time":10,"description":"Beaten eggs cooked in a pan","labels":["vegetarian"]},
+    {"id":7,"name":"Escargots au beurre persillé","time":30,"description":"Very atypical, but very delicious !","labels":["bourgogne"]}
+]
+```
+
+### Get recipes filtered by labels
+
+```shell
+curl https://food-atlas.cc/recipes?labels=vegetarian,glutenfree
+```
+
+Output:
+
+```
+[
+    {"id":4,"name":"Rösti","time":50,"description":"Can be served with fried egg on top","labels":["vegetarian","glutenfree"]},
+    {"id":5,"name":"Ratatouille","time":80,"description":"Mix of delicious vegetables","labels":["vegan","vegetarian","glutenfree"]}
+]
+```
+
+### Get a specific recipe
+
+```shell
+curl https://food-atlas.cc/recipes/3
+```
+
+Output:
+
+```
+{
+    "id":3,
+    "name":"Taboulé",
+    "time":25,
+    "description":"The traditional delicious recipe",
+    "labels":["vegan","vegetarian","salad"]
+}
+```
+
+### Modifying a recipe
+
+```shell
+curl -X PATCH -d '{"description": "New desciption for Taboulé"}' https://food-atlas.cc/recipes/3
+```
+
+Output:
+
+```
+{
+    "id":3,
+    "name":"Taboulé",
+    "time":25,
+    "description":"New description for Taboulé",
+    "labels":["vegan","vegetarian","salad"]
+}
+```
+
+### Get all the recipes from a country
+
+```shell
+curl https://food-atlas.cc/LBN/recipes
+```
+
+### Link recipes to a country
+
+```shell
+curl -X POST -d '[5,6,7]' https://food-atlas.cc/FRA/recipes
 ```
 
 ## Contributing
