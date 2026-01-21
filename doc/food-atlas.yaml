@@ -52,6 +52,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Recipe"
+        "400":
+          description: "Request body is invalid"
         "409":
           $ref: "#/components/responses/RecipeExists"
   /recipes/{id}:
@@ -93,6 +95,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Recipe"
+        "400":
+          description: "Body request is invalid"
         "404":
           $ref: "#/components/responses/RecipeNotFound"
         "409":

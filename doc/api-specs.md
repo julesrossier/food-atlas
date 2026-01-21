@@ -61,7 +61,6 @@ A JSON array with the following fields :
 #### Status codes
 
 - `200` (OK) - Request successful
-- `400` (Bad request) - Request parameters are invalid
 
 ### Get a specific recipe
 
@@ -103,7 +102,7 @@ Update the requested recipe with the values given in body request.
 #### Request
 
 - The request path must contain the ID of the recipe we want to modify
-- The request body must be a JSON with **at least** one of these fields :
+- The request body must be a JSON with at least one of these fields :
   - `name` : a string with the new name of the recipe
   - `algorithm` : a string with the new steps to accomplish the recipe
   - `ingreditents` : a JSON array containing the new ingredients of the recipe (ingredients in string format)
@@ -111,13 +110,19 @@ Update the requested recipe with the values given in body request.
 
 #### Response
 
-No response body
+Response is a JSON containing the following fields :
+- `id` : identifier of the recipe
+- `name` : the name of the recipe
+- `labels` : the labels of the recipe
+- `time` : time needed to prepare the recipe
+- `description` : description of the recipe
 
 #### Status codes
 
-- `204` (No content) - The request is successful
+- `200` (OK) - The request is successful
 - `400` (Bad request) - Request body is invalid
 - `404` (Not found) - Recipe not found
+- `409` (Conflict) - An other recipe already exists with this name
 
 ### Delete a recipe
 
@@ -160,7 +165,7 @@ The request body must contain a JSON with the following fields :
 
 The response contains a JSON with the following fields :
 
-- `code` : the identifier of the new country
+- `code` : the code of the new country
 - `name` : the name of the new country
 - `recipes_ids` : the ids of the recipes associated to the new country
 
@@ -168,6 +173,7 @@ The response contains a JSON with the following fields :
 
 - `201` (Created) : The request is successful
 - `400` (Bad Request) : The request body is invalid
+- `409` (Conflict) : A country already exists with same name or same code
 
 ### List all countries
 
@@ -181,7 +187,7 @@ Get a list of countries.
 
 The response contains a JSON array with the following fields :
 
-- `code` : the identifier of the country
+- `code` : the code of the country
 - `name` : the name of the country
 
 #### Status codes
@@ -227,7 +233,11 @@ The request path must contain the id of the country we want to update. The reque
 
 #### Response
 
-No response body.
+The response is a JSON containing the following fields :
+
+- `code` : the identifier of the country
+- `name` : the name of the country
+- `recipes_ids` : the ids of the recipes linked to the country
 
 #### Status codes
 
@@ -244,7 +254,7 @@ The country can be deleted only if it does not have any recipe linked.
 
 #### Request
 
-The request path must contain the id of the country we want to update
+The request path must contain the id of the country we want to delete
 
 #### Response
 
@@ -276,7 +286,6 @@ The response body contains a JSON array with the following fields :
 #### Status codes
 
 - `200` (OK) : Request successful
-- `400` (Bad request) : The path parameter is invalid
 - `404` (Not found) : Country not found
 
 ### Link a recipe to a country
@@ -289,9 +298,7 @@ Link some recipes to a country.
 
 #### Request
 
-The request path must contain the id of the country we want to add recipes. The query parameter must contain the following field :
-
-- `recipesIds` : The list of ids associated to the recipe we want to link to the country.
+The request path must contain the id of the country we want to add recipes. The request body is a JSON array containing the identifiers of the recipes we want to link to the country.
 
 #### Response
 
