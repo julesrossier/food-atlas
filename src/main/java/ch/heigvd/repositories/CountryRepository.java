@@ -121,6 +121,8 @@ public class CountryRepository {
   }
 
   public String getCache(String id) {
-    return Integer.toHexString(countries.get(id).hashCode());
+    Country c = countries.get(id);
+    if (c == null) return null;
+    return Integer.toHexString(c.hashCode());
   }
 }

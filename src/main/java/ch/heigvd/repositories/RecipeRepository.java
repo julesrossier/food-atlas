@@ -99,6 +99,8 @@ public class RecipeRepository {
   }
 
   public String getCache(int i) {
-    return Integer.toHexString(recipes.get(i).hashCode());
+    Recipe r = recipes.get(i);
+    if (r == null) return null;
+    return Integer.toHexString(r.hashCode());
   }
 }
