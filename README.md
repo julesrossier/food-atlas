@@ -4,6 +4,24 @@ Food Atlas is a HTTP API that is intended to list various recipes around the wor
 
 The API definition can be found in [this document](doc/api-specs.md). Also, a Swagger UI is displayed as a welcome page when the application is deployed and linked to Traefik.
 
+## Table of contents
+
+* [Food Atlas](#food-atlas)
+* [Table of contents](#table-of-contents)
+* [Installing and launching the application](#installing-and-launching-the-application)
+  * [From source](#from-source-api-only)
+  * [With Docker and Docker Compose](#with-docker-and-docker-compose)
+* [Usage example of API](#usage-examples-of-api)
+  * [Create a new recipe](#create-a-new-recipe)
+  * [Get all the recipes](#get-all-the-recipes)
+  * [Get recipes filtered by time](#get-recipes-filtered-by-time)
+  * [Get recipes filtered by labels](#get-recipes-filtered-by-labels)
+  * [Get a specific recipe](#get-a-specific-recipe)
+  * [Modifying a recipe](#modifying-a-recipe)
+  * [Get all the recipes from a country](#get-all-the-recipes-from-a-country)
+  * [Link recipes to a country](#link-recipes-to-a-country)
+* [Contributing](#contributing)
+* [Authors](#authors)
 
 ## Installing and launching the application
 
@@ -194,7 +212,6 @@ $ docker build -t food-atlas .
 
 To push the Image (you need to be logged in to Github Container Registry) :
 
-**TODO**: modify paths when we have package in right place.
 
 ```sh
 $ docker tag dai-go ghcr.io/yanniskawronski/food-atlas:<tag>
