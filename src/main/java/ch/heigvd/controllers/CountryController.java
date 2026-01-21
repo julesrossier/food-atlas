@@ -2,11 +2,8 @@ package ch.heigvd.controllers;
 
 import ch.heigvd.entities.Country;
 import ch.heigvd.repositories.CountryRepository;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.Context;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import io.javalin.http.*;
+import java.util.*;
 
 public class CountryController {
   private final CountryRepository countryRepository;
@@ -31,13 +28,23 @@ public class CountryController {
 
   public void getOneCountry(Context ctx) {
     String countryCode = ctx.pathParam("code");
+    String serverEtag = countryRepository.getCache(countryCode);
+    String clientEtag = ctx.header("If-None-Match");
+    if(Objects.equals(serverEtag, clientEtag))
+      throw new NotModifiedResponse();
+    ctx.header("ETag", serverEtag);
     ctx.json(countryRepository.getCountryByCode(countryCode));
   }
 
   public void patchCountry(Context ctx) {
     String countryCode = ctx.pathParam("code");
+    String serverEtag = countryRepository.getCache(countryCode);
+    String clientEtag = ctx.header("If-Match");
+    if(!Objects.equals(serverEtag, clientEtag))
+      throw new PreconditionFailedResponse();
     Country newEntry = ctx.bodyAsClass(Country.class);
     countryRepository.updateCountry(countryCode, newEntry);
+    ctx.header("ETag", countryRepository.getCache(countryCode));
     ctx.status(204);
   }
 
