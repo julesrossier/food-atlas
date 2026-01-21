@@ -60,20 +60,14 @@ public class CountryController {
   public void linkRecipesToCountry(Context ctx) {
     String countryCode = ctx.pathParam("code");
 
-    List<Integer> recipesIds = new ArrayList<>();
-    String recipesIdsEntry = ctx.queryParam("recipesIds");
-    if (!recipesIdsEntry.isEmpty()) {
-      try {
-        recipesIds =
-            Arrays.stream(recipesIdsEntry.split(",")).toList().stream()
-                .map(Integer::parseInt)
-                .toList();
-      } catch (NumberFormatException e) {
-        throw new BadRequestResponse("Invalid request path parameter");
-      }
+    Integer[] recipeIds;
+    try {
+      recipeIds = ctx.bodyValidator(Integer[].class).get();
+    } catch (Exception e) {
+      throw new BadRequestResponse();
     }
 
-    countryRepository.linkRecipesToCountry(countryCode, recipesIds);
+    countryRepository.linkRecipesToCountry(countryCode, Arrays.asList(recipeIds));
     ctx.status(204);
   }
 
