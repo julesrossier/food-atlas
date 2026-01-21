@@ -112,9 +112,9 @@ To setup the required DNS Records follow these steps:
 2. Add an A record for your root domain pointing to the public ip of your VPS
 3. Add a wildcard A record for your root domain to account for all subdomains also pointing to the public ip of your VPS
 
-![](./doc/dns_setup.png)
+![](dns_setup.png)
 
-![](./doc/dns_records.png)
+![](dns_records.png)
 
 which should give you results similar to:
 
