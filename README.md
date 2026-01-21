@@ -76,7 +76,13 @@ docker compose up -d
 
 ### Deployment
 
-See [the SETUP document](doc/SETUP.md)
+#### VPS
+
+To setup your server see [VPS](./doc/SETUP.md#vps)
+
+#### DNS records
+
+To setup your DNS see [DNS](./doc/SETUP.md#dns)
 
 ## Usage examples of API
 

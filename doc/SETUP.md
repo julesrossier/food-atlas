@@ -94,14 +94,17 @@ cd ~
 git clone https://github.com/julesrossier/food-atlas.git
 cd food-atlas
 ```
-
 Set env variables according to readme
 ```
 vim .env # For website
 vim ./traefik/.env for traefik
 ```
 
-The app is ready to be deployed using docker (as explained in the readme)
+> [!NOTE]  
+> You might need to create access tokens for the cloudflare api (if using the cloudfalre setup as provided)
+> Then check out https://go-acme.github.io/lego/dns/cloudflare/#api-tokens
+
+Then the app is ready to be deployed using docker (as explained in the readme)
 
 ## DNS
 
