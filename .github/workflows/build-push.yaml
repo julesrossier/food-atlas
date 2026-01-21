@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - "main"
-      - "5-create-cicd-for-build-and-push-of-docker-image-to-registry"
     tags:
       - "v*.*.*"
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: yanniskawronski/foodatlas
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   docker:
